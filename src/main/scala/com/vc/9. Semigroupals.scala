@@ -2,7 +2,6 @@ package com.vc
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
-import scala.util.Failure
 
 /**
   * Semigroupal is type that allows us to combine the context
