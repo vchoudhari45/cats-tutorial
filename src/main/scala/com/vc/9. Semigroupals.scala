@@ -50,5 +50,30 @@ object Semigroupals {
     //mapN
     val mapNRes = (123.some, "abc".some).mapN((x, y) => x + y)
     println(mapNRes) //Some(123abc)
+
+    //custom monoid with imapN
+    import cats.Monoid
+    import cats.instances.long._     // for Monoid
+    import cats.instances.string._  // for Monoid
+    import cats.syntax.apply._
+    import cats.instances.invariant._ // for  catsSemigroupalForMonoid: InvariantSemigroupal[Monoid]
+    import cats.syntax.semigroup._ // for |+|
+
+    case class User(id:Long, name: String)
+    val tupleToUser: (Long, String) => User = User.apply _
+    val userToTuple: User => (Long, String) = user => (user.id, user.name)
+
+    implicit val userMonoid: Monoid[User] = (
+      Monoid[Long],
+      Monoid[String],
+    ).imapN(tupleToUser)(userToTuple)
+
+    val resMonoid = User(123l, "abc") |+| User(456, "xyz")
+    println(resMonoid) //User(579,abcxyz)
+
+    import cats.instances.list._
+    val semigroupalOnList = Semigroupal[List].product(List(1, 2), List(3, 4))
+    println(semigroupalOnList) //semigroupalOnList: List[(Int, Int)] = List((1,3), (1,4), (2,3), (2,4))
+
   }
 }
