@@ -1,6 +1,6 @@
 package com.vc
 
-import cats.Monad
+import cats.{Eval, Monad}
 
 import scala.util.Try
 
@@ -122,6 +122,15 @@ object Monads extends App {
     val x = { math.random() }                   //Always same value on accessing x
     lazy val xLazy = { math.random() }         //Always same value on accessing xLazy but evaluated on first access
     def xDef = { math.random() }      //Always different value
+
+
+    //Eval.defer makes recursive method stack safe
+    def factorial(n: BigInt): BigInt =
+      if(n == 1) n else n * factorial(n - 1)
+
+    def factorialEval(n: BigInt): Eval[BigInt] =
+      if(n == 1) Eval.now(n)
+      else Eval.defer(factorialEval(n - 1).map(_ * n))
 
 
 }
